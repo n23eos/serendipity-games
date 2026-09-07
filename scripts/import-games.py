@@ -1,8 +1,9 @@
 """Rebuild sibling projects in temporary copies; publish compiled assets only."""
-import pathlib, tempfile, shutil, subprocess, re, json
+import pathlib, tempfile, shutil, subprocess, re, json, sys
 root=pathlib.Path(__file__).resolve().parents[1]
-projects={'raindrops':'ya_games_raindrops','ricochet':'game_rickochet','bunny-runner':'bunny_runner'}
+projects={'raindrops':'ya_games_raindrops','ricochet':'game_rickochet','bunny-runner':'bunny_runner','jelly-mix':'jelly3_in_row'}
 for slug, source in projects.items():
+ if len(sys.argv)>1 and slug not in sys.argv[1:]: continue
  src=root.parent/source
  with tempfile.TemporaryDirectory(prefix='serendipity-') as tmp:
   work=pathlib.Path(tmp)/source
@@ -13,9 +14,13 @@ for slug, source in projects.items():
   if slug=='raindrops':
    edit('src/main.ts','const isLocalHost = LOCAL_HOSTS.has(globalThis.location.hostname);','const isLocalHost = true; // Standalone portfolio demo')
    edit('src/main.ts','createMockAdapter({ setMuted,','createMockAdapter({ navigatorLanguage: "en", setMuted,')
-  elif slug=='ricochet':
+  elif slug in ('ricochet', 'jelly-mix'):
    edit('src/game/sdk/platform.ts',"location.hostname === 'localhost'","true || location.hostname === 'localhost'")
    edit('src/game/sdk/platform.ts',"(typeof navigator !== 'undefined' ? navigator.language : 'ru').slice(0, 2)","'en'")
+   if slug=='jelly-mix':
+    edit('index.html','<script src="/sdk.js"></script>','')
+    build_id=subprocess.check_output(['git','rev-parse','--short','HEAD'],cwd=src,text=True).strip()
+    edit('vite.config.ts',"execFileSync('git', ['rev-parse', '--short', 'HEAD'], { encoding: 'utf8' }).trim()",json.dumps(build_id))
   else:
    edit('src/YandexSDK.js',"if (!ysdk) return 'ru';","if (!ysdk) return 'en';")
    p=work/'index.html';s=p.read_text();s=re.sub(r'<script>.*?</script>\s*<script async src="/sdk.js".*?</script>','<script>window.__yandexSdkInitPromise = Promise.resolve(null);</script>',s,flags=re.S);p.write_text(s)

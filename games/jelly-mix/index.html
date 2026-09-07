@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Желейный взрыв</title>
+    <!-- п. 1.19.1: SDK подключается ТОЛЬКО статичным тегом в head.
+         Локальный 404 — норма; обёртка ждёт window.YaGames поллингом. -->
+    
+    <!-- Все стили живут в src/styles/ и собираются Vite в один минифицированный
+         файл. Тег render-blocking и стоит в head, поэтому первый кадр (сплэш,
+         .rotate-gate) рисуется уже со стилями — инлайнить критический CSS не
+         нужно. Порядок @import внутри index.css повторяет порядок исходного
+         <style> и является частью поведения — см. комментарий в index.css. -->
+    <script type="module" crossorigin src="./assets/index-BJmCUepY.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-BmcvqDox.css">
+  </head>
+  <body>
+    <!-- Стартовый сплэш: живой экран вместо чёрного окна на время boot.
+         Снимается в main.ts после platform.ready(). -->
+    <div id="boot-splash" role="status" aria-label="Загрузка">
+      <div class="boot-cubes" aria-hidden="true">
+        <div class="boot-cube"></div>
+        <div class="boot-cube"></div>
+        <div class="boot-cube"></div>
+      </div>
+      <div class="boot-bar" aria-hidden="true"></div>
+    </div>
+    <div id="app"></div>
+    <!-- Игра портретная: поле 7x8 в ландшафте телефона даёт клетку ~8px, а
+         шапка карты не влезает в 292px высоты. Заглушка убирает ландшафтные
+         ветки вёрстки целиком (п. 1.6.1.3, 1.10.1). -->
+    <div class="rotate-gate" role="alertdialog" aria-live="polite">
+      <div class="rotate-gate-icon" aria-hidden="true"></div>
+      <p class="rotate-gate-text"></p>
+    </div>
+  </body>
+</html>

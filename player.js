@@ -1,4 +1,4 @@
-const games = {'raindrops':'Raindrops','ricochet':'Ricochet: Neon Drive','bunny-runner':'Bunny Runner'};
+const games = {'raindrops':'Raindrops','ricochet':'Ricochet: Neon Drive','bunny-runner':'Bunny Runner','jelly-mix':'Jelly Mix'};
 const slug = new URLSearchParams(location.search).get('game');
 const frame = document.getElementById('game');
 const button = document.getElementById('fullscreen');
