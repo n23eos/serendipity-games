@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <!-- viewport-fit=cover обязателен: без него env(safe-area-inset-*)
+       отдаёт ноль, и все отступы под чёлку и домашнюю полосу в ui.css
+       молча садятся на запасные значения max(...). Все обращения к
+       env() там только увеличивают отступ, поэтому включение вставок
+       может лишь отодвинуть интерфейс от краёв, но не задвинуть под них. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>Bunny Runner</title>
+  <!-- Yandex Games SDK: на платформе /sdk.js отдаёт сам Яндекс; локально
+       файла нет — onerror зовёт initSDK без YaGames, игра уходит в mock. -->
+  <script>window.__yandexSdkInitPromise = Promise.resolve(null);</script>
+  <style>
+    /* Палитра дублирует Theme.js (candy / high-dopamine). */
+    :root {
+      --c-gold: #FFC400;
+      --c-violet: #8C4DFF;
+      --c-blue: #22A7FF;
+      --c-red: #FF3B3B;
+      --c-green: #4EE87C;
+      --c-pink: #FF4D8D;
+    }
+    html, body {
+      margin: 0;
+      overflow: hidden;
+      touch-action: none;
+      /* Свайп вниз по игре не должен перезагружать страницу
+         (pull-to-refresh на Android) и качать «резинку» на iOS. */
+      overscroll-behavior: none;
+    }
+    /* Long tap по игровому полю не должен звать системное меню и выделение:
+       модерация Яндекса это проверяет. Правила стоят на канвасе явно —
+       Firefox и WebKit не наследуют user-select от body. */
+    #game {
+      display: block;
+      width: 100vw;
+      height: 100vh;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+    #ui {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      font-family: 'Trebuchet MS', 'Segoe UI', sans-serif;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .hud {
+      position: absolute;
+      top: max(10px, env(safe-area-inset-top));
+      left: 14px;
+      right: 14px;
+      display: flex;
+      justify-content: space-between;
+      font-weight: bold;
+      font-size: 22px;
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.45);
+    }
+    .hud-coins { color: var(--c-gold); }
+    .hud-distance { color: #ffffff; }
+    .death-screen {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(20, 8, 32, 0.55);
+      pointer-events: auto;
+    }
+    .death-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      min-width: 240px;
+      padding: 24px 28px;
+      border-radius: 18px;
+      background: rgba(30, 16, 50, 0.92);
+      color: #ffffff;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    }
+    .death-title {
+      font-size: 30px;
+      font-weight: bold;
+      color: var(--c-red);
+    }
+    .death-stats {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      font-size: 18px;
+    }
+    .death-stats b { color: var(--c-gold); }
+    .death-panel button {
+      padding: 12px 16px;
+      border: none;
+      border-radius: 12px;
+      font: inherit;
+      font-size: 18px;
+      font-weight: bold;
+      color: #ffffff;
+      cursor: pointer;
+    }
+    .death-panel button:disabled { opacity: 0.45; cursor: default; }
+    .death-revive { background: var(--c-green); }
+    .death-double { background: var(--c-violet); }
+    .death-again { background: var(--c-blue); }
+    .death-rate { background: var(--c-gold); }
+    .death-menu { background: rgba(255, 255, 255, 0.14); }
+  </style>
+  <script type="module" crossorigin src="./assets/index-C1l_XZrv.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/three-CEWUNpg9.js">
+  <link rel="modulepreload" crossorigin href="./assets/howler-pgPstPYS.js">
+  <link rel="stylesheet" crossorigin href="./assets/index-CC9h-A1U.css">
+</head>
+<body>
+  <canvas id="game"></canvas>
+  <div id="ui"></div>
+</body>
+</html>

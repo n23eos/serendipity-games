@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover"
+    />
+    <title>Рикошет: Неоновый Драйв</title>
+    <style>
+      :root {
+        /* Safe area iOS попадает в расчёт вьюпорта (ТЗ 10.1). */
+        --safe-top: env(safe-area-inset-top, 0px);
+        --safe-bottom: env(safe-area-inset-bottom, 0px);
+      }
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        background: #080b11;
+        touch-action: none;
+        -webkit-tap-highlight-color: transparent;
+        overscroll-behavior: none;
+        user-select: none;
+        -webkit-user-select: none;
+      }
+      #game,
+      #prism {
+        display: block;
+        width: 100%;
+        height: 100%;
+        /* Грабля №4 прошлых модераций: Firefox/WebKit НЕ наследуют запрет
+           выделения с body — правила обязаны стоять на самом канвасе.
+           Модерация тестирует long tap. */
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+      }
+      /* Скрытый канвас режима не должен занимать место и ловить указатели. */
+      #game[hidden],
+      #prism[hidden] {
+        display: none;
+      }
+
+      /* Интерфейс: один шрифт, узкий гротеск, скругления не больше 4 px,
+         строгий монохром — единственный акцентный цвет отдан траектории
+         (ТЗ раздел 10). Иконок с обводкой нет. */
+      .ui {
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-touch-callout: none;
+        position: fixed;
+        inset: 0;
+        pointer-events: none;
+        font-family: 'Roboto Condensed', 'Arial Narrow', system-ui, sans-serif;
+        color: #c3cfdd;
+        font-size: 16px;
+        letter-spacing: 0.02em;
+      }
+      .ui button {
+        pointer-events: auto;
+        font: inherit;
+        color: #c3cfdd;
+        background: #131a24;
+        border: 1px solid #22303f;
+        border-radius: 4px;
+        padding: 12px 20px;
+        min-width: 180px;
+        min-height: 44px;
+        cursor: pointer;
+      }
+      .ui button:hover:not(:disabled),
+      .ui button:focus-visible {
+        color: #eef3fa;
+        border-color: #3d5169;
+      }
+      .ui button:focus-visible {
+        outline: 2px solid #7fb0ff;
+        outline-offset: 2px;
+      }
+      .ui button:disabled {
+        opacity: 0.35;
+        cursor: default;
+      }
+      .screen,
+      .overlay {
+        position: absolute;
+        inset: 0;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        padding: 24px;
+        box-sizing: border-box;
+      }
+      .screen.visible,
+      .overlay.visible {
+        display: flex;
+      }
+      /* Экран непрозрачен: иначе игровое поле просвечивает сквозь список
+         уровней и настройки (найдено на снимке docs/qa/12-levels-grid.png). */
+      .screen {
+        background: #080b11;
+        pointer-events: auto;
+      }
+      .overlay {
+        background: rgba(8, 11, 17, 0.86);
+        pointer-events: auto;
+      }
+      /* Победа: прозрачнее и мягче остальных оверлеев — праздничные
+         эффекты в поле остаются видны, оверлей плавно проявляется. */
+      .overlay-win {
+        background: radial-gradient(ellipse at center, rgba(8, 11, 17, 0.72) 0%, rgba(8, 11, 17, 0.45) 100%);
+      }
+      .overlay-win.visible {
+        animation: win-fade 400ms ease-out;
+      }
+      @keyframes win-fade {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      .title {
+        font-size: 34px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        /* Длинное название переносится на узком экране — строки центруем. */
+        text-align: center;
+        margin: 0 0 4px;
+        color: #eef3fa;
+      }
+      /* Буквы названия: волна неонового перелива бежит по буквам —
+         цвет и свечение переливаются мята → роза → фиолет, каждая буква
+         отстаёт от соседки. Период 5.5 с — перелив, не мерцание. */
+      .title-letter {
+        display: inline-block;
+        animation: title-shimmer 5.5s ease-in-out infinite;
+        animation-delay: calc(var(--i) * 0.12s);
+        /* До старта своей задержки буква держит цвет нулевого кадра. */
+        animation-fill-mode: backwards;
+      }
+      @keyframes title-shimmer {
+        0%,
+        100% {
+          color: #a9f0dc;
+          text-shadow: 0 0 14px rgba(120, 230, 200, 0.55);
+          transform: translateY(0);
+        }
+        33% {
+          color: #ffc9d8;
+          text-shadow: 0 0 16px rgba(255, 150, 180, 0.6);
+          transform: translateY(-2px);
+        }
+        66% {
+          color: #cdbdf7;
+          text-shadow: 0 0 16px rgba(170, 140, 255, 0.6);
+          transform: translateY(1px);
+        }
+      }
+      /* Настройка «меньше движения» и системная prefers-reduced-motion:
+         буквы статичны, но мягкий неоновый цвет остаётся. */
+      .reduced-motion .title-letter {
+        animation: none;
+        color: #cfe6dd;
+        text-shadow: 0 0 12px rgba(150, 210, 200, 0.4);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .title-letter {
+          animation: none;
+          color: #cfe6dd;
+          text-shadow: 0 0 12px rgba(150, 210, 200, 0.4);
+        }
+      }
+      .title-small {
+        font-size: 20px;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        margin: 0;
+      }
+      .subtitle {
+        margin: 0 0 12px;
+        color: #6b7a8c;
+      }
+      .overlay-title {
+        margin: 0;
+        font-size: 18px;
+      }
+      .row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .row button {
+        min-width: 84px;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(64px, 1fr));
+        gap: 8px;
+        width: min(100%, 520px);
+        max-height: 60vh;
+        overflow-y: auto;
+        pointer-events: auto;
+        padding: 4px;
+      }
+      .grid .cell {
+        min-width: 0;
+        padding: 8px 4px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+      }
+      .cell-stars {
+        font-size: 11px;
+        color: #6b7a8c;
+        min-height: 12px;
+      }
+      /* Коллекция: фиксированная сетка 6×5 БЕЗ прокрутки — платформа
+         категорически против скроллов (особенно Smart TV). Все 30 карточек
+         видны сразу: ширина сетки ограничена и шириной, и высотой экрана,
+         чтобы пять рядов 16:9 всегда влезали целиком. */
+      .screen-collection.visible {
+        animation: screen-fade-in 200ms ease-out both;
+      }
+      @keyframes screen-fade-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      .collection-grid {
+        display: grid;
+        grid-template-columns: repeat(6, 1fr);
+        gap: clamp(4px, 0.8vw, 10px);
+        width: min(96vw, 960px, calc((100vh - 190px) * 2.13));
+        width: min(96vw, 960px, calc((100dvh - 190px) * 2.13));
+        pointer-events: auto;
+        perspective: 900px;
+      }
+      .collection-card {
+        position: relative;
+        aspect-ratio: 16 / 9;
+        min-width: 0;
+        padding: 0;
+        background-color: #0d1219;
+        background-size: cover;
+        background-position: center;
+        border: 1px solid #22303f;
+        border-radius: 4px;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transform-style: preserve-3d;
+      }
+      /* Ячейка — кнопка (тап по открытой = полная картинка). Селектор с .ui,
+         иначе базовый .ui button перебивает padding и min-width. */
+      .ui button.collection-card {
+        min-width: 0;
+        min-height: 0;
+        padding: 0;
+        border: 1px solid #22303f;
+        border-radius: 4px;
+        background-color: #0d1219;
+        background-size: cover;
+        background-position: center;
+      }
+      .ui button.collection-card:disabled {
+        /* Закрытая карточка — не «выключенная кнопка», а обычный тёмный слот. */
+        opacity: 1;
+        cursor: default;
+      }
+      .collection-card .card-image {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        /* Картинка не искажается: пропорции держит cover. */
+        object-fit: cover;
+        max-width: 100%;
+      }
+      .collection-card .card-question {
+        font-size: clamp(16px, 3.2vw, 34px);
+        color: #3d5169;
+      }
+      /* Полноэкранный просмотр открытой карточки: вся машина целиком. */
+      .collection-viewer {
+        position: absolute;
+        inset: 0;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        background: rgba(8, 11, 17, 0.94);
+        pointer-events: auto;
+        cursor: pointer;
+        z-index: 2;
+      }
+      .collection-viewer.visible {
+        display: flex;
+      }
+      .collection-viewer img {
+        max-width: 96vw;
+        max-height: 96vh;
+        max-height: 96dvh;
+        object-fit: contain;
+        border: 1px solid #22303f;
+        border-radius: 4px;
+      }
+      .collection-viewer .viewer-close {
+        position: absolute;
+        top: max(10px, env(safe-area-inset-top));
+        right: 12px;
+        min-width: 44px;
+        padding: 8px 12px;
+      }
+      /* Анимация раскрытия: импульс -> полуоборот -> замена -> полуоборот -> свечение. */
+      .collection-card.pulse {
+        box-shadow: 0 0 18px rgba(127, 176, 255, 0.55);
+        border-color: #7fb0ff;
+        transition: box-shadow 200ms ease-out;
+      }
+      .collection-card.flip-out {
+        transform: rotateY(90deg);
+        transition: transform 280ms ease-in;
+      }
+      .collection-card.flip-in {
+        transform: rotateY(0deg);
+        transition: transform 320ms ease-out;
+      }
+      .collection-card.glow {
+        border-color: #7fb0ff;
+        box-shadow: 0 0 14px rgba(127, 176, 255, 0.45);
+        transition: box-shadow 400ms ease-out;
+      }
+      .collection-card.unlocking {
+        transform: rotateY(0deg);
+      }
+      .collection-card.crossfade .card-image {
+        animation: card-fade-in 160ms ease-out both;
+      }
+      @keyframes card-fade-in {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .collection-card.flip-out,
+        .collection-card.flip-in {
+          transition: none;
+          transform: none;
+        }
+      }
+      .stars {
+        display: flex;
+        gap: 12px;
+        font-size: 30px;
+        color: #22303f;
+      }
+      .star.filled {
+        color: #eef3fa;
+        animation: star-in 220ms ease-out both;
+      }
+      @keyframes star-in {
+        from {
+          transform: scale(0.6);
+          opacity: 0;
+        }
+        to {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+      /* Компактные круглые кнопки поверх поля (пауза, бонусы): специфичность
+         0-2-0 бьёт .ui button {min-width: 180px} (0-1-1). Без этого правила
+         обе кнопки растягивались на полную ширину и накрывали друг друга
+         в портрете на 375 px — родовая причина найденного оверлапа. */
+      .ui .icon-button {
+        min-width: 44px;
+      }
+      .pause-button {
+        position: absolute;
+        top: max(10px, env(safe-area-inset-top));
+        left: 50%;
+        transform: translateX(-50%);
+        padding: 8px 12px;
+        display: none;
+      }
+      .ui.in-game .pause-button {
+        display: block;
+      }
+      /* Кнопка бонусов: верхний правый угол, пауза стоит по центру. */
+      .boosters-button {
+        position: absolute;
+        top: max(10px, env(safe-area-inset-top));
+        right: 12px;
+        padding: 8px 12px;
+        font-size: 18px;
+        display: none;
+      }
+      .ui.in-game .boosters-button {
+        display: block;
+      }
+      /* Намёк после двух рестартов подряд: кнопка бонусов пульсирует свечением.
+         Цвет тот же, что у подсветки карточки коллекции (#7fb0ff), — один
+         визуальный язык «смотри сюда» на всю игру. */
+      .boosters-button.attention {
+        animation: booster-attention 900ms ease-in-out 3;
+      }
+      @keyframes booster-attention {
+        0%,
+        100% {
+          box-shadow: 0 0 0 rgba(127, 176, 255, 0);
+          border-color: #22303f;
+        }
+        50% {
+          box-shadow: 0 0 18px rgba(127, 176, 255, 0.75);
+          border-color: #7fb0ff;
+        }
+      }
+      /* Меньше движения: намёк остаётся, пульсация — нет. */
+      .reduced-motion .boosters-button.attention {
+        animation: none;
+        box-shadow: 0 0 14px rgba(127, 176, 255, 0.6);
+        border-color: #7fb0ff;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .boosters-button.attention {
+          animation: none;
+          box-shadow: 0 0 14px rgba(127, 176, 255, 0.6);
+          border-color: #7fb0ff;
+        }
+      }
+      /* Вкладки коллекции: активная подсвечена той же неоновой рамкой,
+         что и всё «выбранное» в игре. */
+      .collection-tabs .tab.active {
+        border-color: #7fb0ff;
+        box-shadow: 0 0 14px rgba(127, 176, 255, 0.35);
+      }
+      .booster-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        width: min(92vw, 520px);
+      }
+      .booster-row {
+        display: grid;
+        grid-template-columns: 1fr auto auto;
+        grid-template-areas: 'title use get' 'hint use get' 'count use get';
+        gap: 2px 10px;
+        align-items: center;
+        padding: 10px 12px;
+        border: 1px solid #22303f;
+        border-radius: 4px;
+        background: #0d1219;
+      }
+      .booster-title {
+        grid-area: title;
+        margin: 0;
+        color: #eef3fa;
+      }
+      .booster-hint {
+        grid-area: hint;
+        margin: 0;
+        font-size: 13px;
+        color: #6b7a8c;
+      }
+      .booster-count {
+        grid-area: count;
+        margin: 0;
+        font-size: 12px;
+        color: #6b7a8c;
+      }
+      .ui .booster-row button {
+        min-width: 120px;
+      }
+      .ui .booster-row button[data-use] {
+        grid-area: use;
+      }
+      .ui .booster-row button[data-get] {
+        grid-area: get;
+      }
+      /* Подсказка повернуть телефон — баннер в нижней зоне, НЕ поверх поля.
+         Первый тест поймал ровно это: полноэкранный оверлей перехватывал жест
+         и делал игру непроходимой в портрете. Баннер не ловит указатель
+         вообще, кроме своей кнопки. */
+      .rotate-hint {
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        bottom: max(16px, env(safe-area-inset-bottom));
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 12px 14px;
+        background: #131a24;
+        border: 1px solid #22303f;
+        border-radius: 4px;
+        pointer-events: none;
+        text-align: left;
+      }
+      .rotate-hint.visible {
+        display: flex;
+      }
+      .rotate-hint .overlay-title {
+        font-size: 14px;
+        flex: 1;
+      }
+      .rotate-hint button {
+        pointer-events: auto;
+        min-width: 0;
+        padding: 8px 12px;
+        white-space: nowrap;
+      }
+      .rotate-icon {
+        font-size: 22px;
+        color: #6b7a8c;
+      }
+      /* Подсказка про новую механику: та же логика, что у подсказки поворота —
+         объясняет правило, ничего не перекрывает и гаснет сама. */
+      .mechanic-hint {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: max(56px, calc(env(safe-area-inset-top) + 56px));
+        display: none;
+        max-width: min(92vw, 560px);
+        padding: 10px 16px;
+        background: #131a24;
+        border: 1px solid #2c3f55;
+        border-radius: 4px;
+        pointer-events: none;
+        animation: hint-in 220ms ease-out both;
+      }
+      .mechanic-hint.visible {
+        display: block;
+      }
+      .mechanic-hint .overlay-title {
+        font-size: 14px;
+        margin: 0;
+        text-align: center;
+      }
+      @keyframes hint-in {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -6px);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, 0);
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mechanic-hint {
+          animation: none;
+        }
+      }
+      /* Подсказка режима постановки зеркала: анатомия и позиция rotate-hint —
+         баннер у нижнего края, сам не ловит указатель (только кнопка отмены).
+         Первая версия стояла в верхней полосе (top:110px, ~72px до начала
+         поля при TOP_BIAS_TOUCH=0.36 на 393×727) — строка «текст + кнопка»
+         заворачивалась в несколько строк на русском и нижний край баннера
+         наезжал на поле (найдено на Pixel 5 в портрете). Внизу того же
+         дефицита нет — rotate-hint там же годами не создавал проблем: у
+         игрока, дошедшего до бонусов (уровень 4+), rotate-hint почти всегда
+         уже погашен первым выстрелом (ТЗ 8.1 — dismissRotateHint), так что
+         совпадение двух баннеров внизу — редкий некритичный случай, а не
+         систематический наезд на игровое поле. */
+      .mirror-hint {
+        position: absolute;
+        left: 12px;
+        right: 12px;
+        bottom: max(16px, env(safe-area-inset-bottom));
+        display: none;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 12px 14px;
+        background: #131a24;
+        border: 1px solid #22303f;
+        border-radius: 4px;
+        pointer-events: none;
+        text-align: left;
+      }
+      .mirror-hint.visible {
+        display: flex;
+      }
+      .mirror-hint .overlay-title {
+        font-size: 14px;
+        margin: 0;
+        flex: 1;
+      }
+      .mirror-hint button {
+        pointer-events: auto;
+        min-width: 0;
+        padding: 8px 12px;
+        white-space: nowrap;
+      }
+      .toast {
+        position: absolute;
+        bottom: 12%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #131a24;
+        border: 1px solid #22303f;
+        border-radius: 4px;
+        padding: 10px 16px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .star.filled {
+          animation: none;
+        }
+        .screen-collection.visible {
+          animation: none;
+        }
+      }
+    </style>
+    <script type="module" crossorigin src="./assets/index-BsztE4sy.js"></script>
+  </head>
+  <body>
+    <canvas id="game"></canvas>
+    <!-- Второй канвас для «Призмы»: у режимов разный ввод, и делить один
+         канвас значило бы слушать чужие указатели в каждом из них. -->
+    <canvas id="prism" hidden></canvas>
+    <div id="ui-root"></div>
+  </body>
+</html>
