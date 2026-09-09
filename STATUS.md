@@ -1,10 +1,10 @@
 # Website redesign · 2026-09-09
 Goal: partner-facing casual browser-game studio, part of Serendipity Research; EN/RU, original cat mascot, animated responsive pages.
 Source: Правки сайта.md. Existing static GitHub Pages stack retained, game builds unchanged.
-Stage: published; awaiting HTTPS certificate.
+Stage: published with enforced HTTPS and confirmed partner contact.
 Checks: local desktop/mobile visual review, language navigation, all four game loads, animation pause, local references and production HTTP passed. See detail below.
-Blocker: GitHub Pages certificate provisioning pending.
-Next: once GitHub issues the certificate, enforce HTTPS and verify apex/www.
+Blockers: none for current website publication.
+Next: user review of published site.
 Mascot: built-in image_gen; assets/studio-mascot.png. Prompt: reference beige cat in yellow raincoat holding coral/turquoise umbrella, premium soft 3D clay game art, lavender floating islands/clouds, no text.
 
 ## Verification / deployment update
@@ -20,3 +20,6 @@ Mascot: built-in image_gen; assets/studio-mascot.png. Prompt: reference beige ca
 
 ## Contact update · 2026-09-09
 User confirmed hello@serendipity-games.com and active domain forwarding. Added mailto links to partner CTA in EN/RU and all ten studio-page footers. Local link/fragment checks passed. Mail delivery not tested; forwarding configuration is user-confirmed. HTTPS certificate still pending on recheck.
+
+## HTTPS completed · 2026-09-09
+After DNS propagation, removed/re-added custom domain per GitHub documentation. Certificate approved for apex/www; enforced HTTPS enabled. Verified HTTPS 200 and two hello mailto links on both home pages; HTTP redirects to HTTPS; HTTPS www redirects to apex. All website changes pushed. User brief remains local and unmodified.
