@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b4a6b"/>
+      <stop offset="0.55" stop-color="#7d6a45"/>
+      <stop offset="1" stop-color="#c9a227"/>
+    </linearGradient>
+    <linearGradient id="brass" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e0be5c"/>
+      <stop offset="1" stop-color="#8d6e3a"/>
+    </linearGradient>
+    <linearGradient id="tower" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6b5638"/>
+      <stop offset="1" stop-color="#3a2e1e"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffe6a8" stop-opacity="0.85"/>
+      <stop offset="1" stop-color="#ffe6a8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="640" height="360" fill="url(#sky)"/>
+  <circle cx="452" cy="150" r="150" fill="url(#glow)"/>
+
+  <!-- дальние шестерни в небе -->
+  <g fill="none" stroke="#d8b463" stroke-opacity="0.28" stroke-width="7">
+    <circle cx="118" cy="86" r="44"/>
+    <circle cx="118" cy="86" r="18"/>
+    <circle cx="556" cy="58" r="30"/>
+  </g>
+  <g stroke="#d8b463" stroke-opacity="0.28" stroke-width="7" stroke-linecap="round">
+    <path d="M118 30v-14M118 156v14M62 86H48M188 86h14M78 46l-10-10M158 126l10 10M158 46l10-10M78 126l-10 10"/>
+  </g>
+
+  <!-- земля -->
+  <path d="M0 292h640v68H0z" fill="#6d5a34"/>
+  <path d="M0 292c92-16 148 12 232 4s142-26 218-16 128 20 190 12v68H0z" fill="#8d6e3a"/>
+
+  <!-- башня -->
+  <path d="M232 360V126l88-56 88 56v234z" fill="url(#tower)"/>
+  <path d="M232 126l88-56 88 56z" fill="#544228"/>
+  <rect x="214" y="118" width="212" height="18" rx="6" fill="#6b5638"/>
+
+  <!-- циферблат -->
+  <circle cx="320" cy="216" r="74" fill="#241c12"/>
+  <circle cx="320" cy="216" r="66" fill="url(#brass)"/>
+  <circle cx="320" cy="216" r="54" fill="#f4e2b0"/>
+  <g stroke="#3a2e1e" stroke-width="5" stroke-linecap="round">
+    <path d="M320 172v-10M320 270v10M364 216h10M266 216h10"/>
+  </g>
+  <g stroke="#241c12" stroke-linecap="round">
+    <path d="M320 216V182" stroke-width="8"/>
+    <path d="M320 216l30 18" stroke-width="6"/>
+  </g>
+  <circle cx="320" cy="216" r="7" fill="#8d6e3a"/>
+
+  <!-- боковые шестерни башни -->
+  <g fill="none" stroke="#c9a227" stroke-width="9">
+    <circle cx="252" cy="318" r="26"/>
+    <circle cx="392" cy="318" r="26"/>
+  </g>
+  <g stroke="#c9a227" stroke-width="9" stroke-linecap="round">
+    <path d="M252 280v-12M252 356v12M214 318h-12M290 318h12"/>
+    <path d="M392 280v-12M392 356v12M354 318h-12M430 318h12"/>
+  </g>
+</svg>

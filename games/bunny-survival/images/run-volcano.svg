@@ -1,0 +1,85 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="vsky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1b0d0b"/>
+      <stop offset="0.55" stop-color="#5a2416"/>
+      <stop offset="1" stop-color="#b4451f"/>
+    </linearGradient>
+    <linearGradient id="rock" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3a2f2b"/>
+      <stop offset="1" stop-color="#1d1715"/>
+    </linearGradient>
+    <linearGradient id="lava" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffd54f"/>
+      <stop offset="0.5" stop-color="#ff7043"/>
+      <stop offset="1" stop-color="#e64a19"/>
+    </linearGradient>
+    <radialGradient id="heat" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ff8a50" stop-opacity="0.7"/>
+      <stop offset="1" stop-color="#ff8a50" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="640" height="360" fill="url(#vsky)"/>
+
+  <!-- дальний вулкан -->
+  <path d="M96 216L188 88l92 128z" fill="#2a201d"/>
+  <path d="M150 152l38-52 38 52-30-10-22 14z" fill="url(#lava)" opacity="0.9"/>
+  <circle cx="188" cy="120" r="70" fill="url(#heat)"/>
+  <!-- дым -->
+  <g fill="#3a2f2b" opacity="0.55">
+    <ellipse cx="188" cy="66" rx="30" ry="16"/>
+    <ellipse cx="214" cy="40" rx="22" ry="12"/>
+    <ellipse cx="164" cy="34" rx="18" ry="10"/>
+  </g>
+
+  <!-- лавовое озеро -->
+  <path d="M0 246h640v114H0z" fill="url(#lava)"/>
+  <circle cx="470" cy="300" r="120" fill="url(#heat)"/>
+
+  <!-- базальтовые плиты поверх лавы -->
+  <g fill="url(#rock)">
+    <path d="M0 232h190l30 26-40 34H0z"/>
+    <path d="M236 268l70-16 62 22-24 44-84 6z"/>
+    <path d="M430 246l86-8 60 26-18 40-104 8z"/>
+    <path d="M96 330l84-10 56 18-10 22H96z"/>
+    <path d="M540 322l100-12v50H528z"/>
+  </g>
+  <!-- трещины на плитах -->
+  <g stroke="#ff7043" stroke-width="3" stroke-linecap="round" opacity="0.85">
+    <path d="M40 258l38 14M120 246l14 30M270 286l40 8M300 262l-8 26M470 268l44 10M492 300l30-8"/>
+  </g>
+
+  <!-- гейзер -->
+  <g opacity="0.9">
+    <path d="M576 246c-10-40-4-70 10-96 12 26 18 56 8 96z" fill="url(#lava)"/>
+    <ellipse cx="588" cy="250" rx="26" ry="8" fill="#ffd54f" opacity="0.6"/>
+  </g>
+
+  <!-- обсидиановый титан -->
+  <g transform="translate(300 300)">
+    <!-- ноги -->
+    <rect x="-46" y="-40" width="34" height="46" rx="6" fill="#241c26"/>
+    <rect x="14" y="-40" width="34" height="46" rx="6" fill="#241c26"/>
+    <!-- корпус -->
+    <path d="M-58 -134h116v96H-58z" fill="#241c26"/>
+    <!-- плечи -->
+    <path d="M-92 -140l40-12 8 44-44 8z" fill="#2f2433"/>
+    <path d="M92 -140l-40-12-8 44 44 8z" fill="#2f2433"/>
+    <path d="M-88 -152l14-30 16 26z" fill="#2f2433"/>
+    <path d="M88 -152l-14-30-16 26z" fill="#2f2433"/>
+    <!-- голова -->
+    <rect x="-30" y="-176" width="60" height="42" rx="6" fill="#2a2130"/>
+    <!-- трещины -->
+    <g fill="#ff5722">
+      <rect x="-44" y="-112" width="70" height="7" rx="3"/>
+      <rect x="14" y="-100" width="7" height="40" rx="3"/>
+      <rect x="-34" y="-74" width="52" height="7" rx="3"/>
+      <rect x="-26" y="-96" width="7" height="30" rx="3"/>
+    </g>
+    <!-- глаза и зев -->
+    <rect x="-20" y="-166" width="14" height="10" rx="3" fill="#ffd54f"/>
+    <rect x="6" y="-166" width="14" height="10" rx="3" fill="#ffd54f"/>
+    <rect x="-18" y="-146" width="36" height="7" rx="3" fill="#ff7043"/>
+  </g>
+</svg>

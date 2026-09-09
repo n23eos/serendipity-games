@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="ssky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2f4632"/>
+      <stop offset="0.6" stop-color="#5c7248"/>
+      <stop offset="1" stop-color="#87a065"/>
+    </linearGradient>
+    <linearGradient id="water" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3b5236"/>
+      <stop offset="1" stop-color="#22301f"/>
+    </linearGradient>
+    <linearGradient id="moss" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6f9c3f"/>
+      <stop offset="1" stop-color="#4a6b2c"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#c6ff4d" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#c6ff4d" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="640" height="360" fill="url(#ssky)"/>
+  <circle cx="470" cy="120" r="150" fill="url(#glow)"/>
+
+  <!-- дальние коряги в тумане -->
+  <g stroke="#2b3a26" stroke-width="9" stroke-linecap="round" opacity="0.55" fill="none">
+    <path d="M74 210v-58M74 176l-24-20M74 186l26-22"/>
+    <path d="M568 206v-48M568 178l22-18M568 188l-20-16"/>
+    <path d="M180 214v-40M180 190l-18-14"/>
+  </g>
+
+  <!-- вода -->
+  <path d="M0 214h640v146H0z" fill="url(#water)"/>
+  <g fill="#4a6b45" opacity="0.5">
+    <ellipse cx="120" cy="268" rx="70" ry="12"/>
+    <ellipse cx="470" cy="300" rx="90" ry="14"/>
+    <ellipse cx="300" cy="248" rx="54" ry="9"/>
+  </g>
+
+  <!-- кочки -->
+  <path d="M0 246c60-22 120-16 176 6 46 18 22 40-40 44H0z" fill="url(#moss)"/>
+  <path d="M470 240c72-16 128-6 170 12v108H470z" fill="url(#moss)"/>
+  <ellipse cx="248" cy="322" rx="86" ry="26" fill="#5c8434"/>
+
+  <!-- пузыри трясины -->
+  <g fill="#8bc34a" opacity="0.85">
+    <circle cx="356" cy="286" r="7"/>
+    <circle cx="376" cy="272" r="5"/>
+    <circle cx="344" cy="266" r="4"/>
+    <circle cx="150" cy="316" r="6"/>
+    <circle cx="168" cy="300" r="4"/>
+  </g>
+
+  <!-- королева-мухоловка -->
+  <g transform="translate(300 300)">
+    <!-- корни -->
+    <g stroke="#4a6b2c" stroke-width="11" stroke-linecap="round">
+      <path d="M-8 6l-52 18M6 6l50 20M-2 8l-16 26M2 8l20 24"/>
+    </g>
+    <!-- стебель -->
+    <rect x="-15" y="-96" width="30" height="106" rx="10" fill="#5f8f3a"/>
+    <!-- листья -->
+    <path d="M-15 -34c-40-16-64-4-70 10 22 14 52 12 70-2z" fill="#4a6b2c"/>
+    <path d="M15 -50c42-14 68 0 74 14-24 12-54 8-74-6z" fill="#5c8434"/>
+    <!-- пасть -->
+    <g transform="translate(0 -108)">
+      <path d="M-46 -6c0-26 20-42 46-42s46 16 46 42c-18 12-30 16-46 16s-30-4-46-16z" fill="#b03a5a"/>
+      <path d="M-46 4c0 24 20 38 46 38s46-14 46-38c-18-12-30-16-46-16s-30 4-46 16z" fill="#8f2f4f"/>
+      <g fill="#f2e8d0">
+        <path d="M-34 -8l8 14-14 2z"/><path d="M-12 -12l8 16-16 2z"/>
+        <path d="M10 -12l8 16-16 2z"/><path d="M32 -8l6 14-14 2z"/>
+        <path d="M-34 8l8-14-14-2z"/><path d="M-12 12l8-16-16-2z"/>
+        <path d="M10 12l8-16-16-2z"/><path d="M32 8l6-14-14-2z"/>
+      </g>
+    </g>
+    <!-- глаза на стебле -->
+    <circle cx="-11" cy="-72" r="5" fill="#101010"/>
+    <circle cx="11" cy="-72" r="5" fill="#101010"/>
+  </g>
+</svg>

@@ -1,6 +1,6 @@
 # Serendipity Games
 
-A casual browser-game portfolio featuring playable, unreleased demos of Raindrops, Ricochet: Neon Drive, Bunny Runner, and Jelly Mix.
+A casual browser-game portfolio featuring playable, unreleased demos of Bunny Survival (Rabbit run!), Ricochet: Neon Drive, Bunny Runner, and Jelly Mix.
 
 Published with GitHub Pages from the main branch root. No server or install required. The site and all game assets use relative paths.
 

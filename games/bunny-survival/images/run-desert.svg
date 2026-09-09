@@ -1,0 +1,79 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="dsky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4aa8d8"/>
+      <stop offset="0.55" stop-color="#a9cfe0"/>
+      <stop offset="1" stop-color="#f0d9a0"/>
+    </linearGradient>
+    <linearGradient id="dune1" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f0d49a"/>
+      <stop offset="1" stop-color="#d9b46a"/>
+    </linearGradient>
+    <linearGradient id="dune2" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e2c07e"/>
+      <stop offset="1" stop-color="#c19a55"/>
+    </linearGradient>
+    <radialGradient id="sun" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#fff6cf" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#fff6cf" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="640" height="360" fill="url(#dsky)"/>
+  <circle cx="486" cy="86" r="118" fill="url(#sun)"/>
+  <circle cx="486" cy="86" r="34" fill="#fff3c4"/>
+
+  <!-- дальние скалы -->
+  <path d="M0 214l64-52 40 30 52-44 46 40 40-26 58 52H0z" fill="#b8875a" opacity="0.55"/>
+  <path d="M392 214l46-38 34 26 40-32 56 44H392z" fill="#a8654a" opacity="0.5"/>
+
+  <!-- дюны -->
+  <path d="M0 236c96-34 176 6 268-14s180-38 372 6v132H0z" fill="url(#dune1)"/>
+  <path d="M0 292c118-30 196 16 300-2s206-30 340 2v68H0z" fill="url(#dune2)"/>
+
+  <!-- кактусы -->
+  <g fill="#4f8a4a">
+    <rect x="86" y="214" width="20" height="80" rx="8"/>
+    <rect x="62" y="238" width="16" height="34" rx="8"/>
+    <rect x="62" y="262" width="34" height="14" rx="7"/>
+    <rect x="114" y="228" width="16" height="42" rx="8"/>
+    <rect x="98" y="256" width="32" height="14" rx="7"/>
+  </g>
+  <g fill="#63a85c">
+    <rect x="556" y="240" width="16" height="58" rx="7"/>
+    <rect x="536" y="258" width="14" height="26" rx="7"/>
+    <rect x="536" y="274" width="28" height="12" rx="6"/>
+  </g>
+
+  <!-- скорпион на переднем плане -->
+  <g transform="translate(300 300)">
+    <!-- хвост дугой -->
+    <g fill="none" stroke="#b5651d" stroke-width="13" stroke-linecap="round">
+      <path d="M42 6C86 2 104-24 96-52"/>
+    </g>
+    <path d="M96 -52l-13 8 9 20 16-8z" fill="#8a5a2b"/>
+    <path d="M104 -72l14 20-20 6z" fill="#ffe082"/>
+    <!-- корпус -->
+    <ellipse cx="16" cy="10" rx="46" ry="24" fill="#d9a441"/>
+    <ellipse cx="-24" cy="8" rx="20" ry="16" fill="#c9963a"/>
+    <g fill="#8a5a2b">
+      <rect x="-6" y="-8" width="40" height="6" rx="3"/>
+      <rect x="-6" y="4" width="40" height="6" rx="3"/>
+      <rect x="-6" y="16" width="40" height="6" rx="3"/>
+    </g>
+    <!-- клешни -->
+    <g fill="#b5651d">
+      <rect x="-72" y="-16" width="34" height="10" rx="5" transform="rotate(-18 -55 -11)"/>
+      <path d="M-92 -30l20 6-6 16-18-8z"/>
+      <rect x="-72" y="14" width="34" height="10" rx="5" transform="rotate(16 -55 19)"/>
+      <path d="M-94 26l20-6 2 18-20 2z"/>
+    </g>
+    <!-- глаза -->
+    <circle cx="-30" cy="2" r="3.4" fill="#2b1a0c"/>
+    <circle cx="-30" cy="14" r="3.4" fill="#2b1a0c"/>
+    <!-- лапы -->
+    <g stroke="#8a5a2b" stroke-width="5" stroke-linecap="round">
+      <path d="M-4 30l-12 16M14 32l-4 18M32 30l10 16"/>
+    </g>
+  </g>
+</svg>

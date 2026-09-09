@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="fsmog" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#241a15"/>
+      <stop offset="0.5" stop-color="#4a352a"/>
+      <stop offset="1" stop-color="#8a6039"/>
+    </linearGradient>
+    <linearGradient id="ffloor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#9a6a42"/>
+      <stop offset="1" stop-color="#5c3d2a"/>
+    </linearGradient>
+    <linearGradient id="flamp" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#ffe9a8" stop-opacity="0.5"/>
+      <stop offset="1" stop-color="#ffe9a8" stop-opacity="0"/>
+    </linearGradient>
+    <radialGradient id="fspark" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#9be7ff" stop-opacity="0.95"/>
+      <stop offset="1" stop-color="#40c4ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="ffurnace" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffb74d" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#ff5722" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="640" height="360" fill="url(#fsmog)"/>
+
+  <!-- дальние трубы и дым -->
+  <g fill="#2f241d">
+    <rect x="30" y="70" width="44" height="170"/>
+    <rect x="22" y="60" width="60" height="14"/>
+    <rect x="92" y="112" width="32" height="128"/>
+    <rect x="86" y="104" width="44" height="12"/>
+  </g>
+  <g fill="#7d6a58" opacity="0.35">
+    <ellipse cx="52" cy="42" rx="34" ry="17"/>
+    <ellipse cx="92" cy="22" rx="26" ry="13"/>
+    <ellipse cx="110" cy="84" rx="21" ry="11"/>
+  </g>
+
+  <!-- лампы под потолком -->
+  <g>
+    <rect x="0" y="44" width="640" height="7" fill="#3c3027"/>
+    <g fill="#ffd54f">
+      <rect x="196" y="51" width="30" height="9"/>
+      <rect x="420" y="51" width="30" height="9"/>
+    </g>
+    <path d="M211 60l58 108h-116z" fill="url(#flamp)"/>
+    <path d="M435 60l58 108h-116z" fill="url(#flamp)"/>
+  </g>
+
+  <!-- крановая балка с крюком -->
+  <g>
+    <rect x="120" y="72" width="400" height="16" fill="#9a9084"/>
+    <rect x="120" y="88" width="400" height="5" fill="#6b6157"/>
+    <rect x="228" y="93" width="40" height="22" fill="#5d5348"/>
+    <rect x="244" y="115" width="8" height="66" fill="#c3ccd1"/>
+    <path d="M232 181h32v22h-32z" fill="#9a9084"/>
+    <path d="M254 203h16v26h-16z" fill="#9a9084"/>
+    <path d="M254 229h30v14h-30z" fill="#9a9084"/>
+  </g>
+
+  <!-- пол цеха -->
+  <path d="M0 238h640v122H0z" fill="url(#ffloor)"/>
+  <g stroke="#3f2b1e" stroke-width="3" opacity="0.55">
+    <path d="M0 268h640M0 306h640M120 238v122M330 238v122M520 238v122"/>
+  </g>
+
+  <!-- шахматная решётка плит: половина обесточена, половина под током -->
+  <g>
+    <g fill="#6e6357" stroke="#4a4239" stroke-width="3">
+      <rect x="14" y="246" width="92" height="46" rx="4"/>
+      <rect x="200" y="246" width="92" height="46" rx="4"/>
+      <rect x="108" y="300" width="92" height="52" rx="4"/>
+      <rect x="292" y="300" width="92" height="52" rx="4"/>
+    </g>
+    <g fill="#12455c" stroke="#40c4ff" stroke-width="4">
+      <rect x="107" y="246" width="92" height="46" rx="4"/>
+      <rect x="14" y="300" width="92" height="52" rx="4"/>
+    </g>
+    <g stroke="#9be7ff" stroke-width="4" stroke-linecap="round" fill="none">
+      <path d="M126 270h22l-10 12 26-14"/>
+      <path d="M33 326h22l-10 12 26-14"/>
+    </g>
+  </g>
+
+  <!-- кислотный приямок -->
+  <ellipse cx="530" cy="318" rx="84" ry="24" fill="#4e5c14"/>
+  <ellipse cx="530" cy="314" rx="62" ry="15" fill="#9ccc00"/>
+  <ellipse cx="514" cy="312" rx="25" ry="7" fill="#ccff33"/>
+
+  <!-- сварочная искра -->
+  <circle cx="150" cy="212" r="30" fill="url(#fspark)"/>
+  <circle cx="150" cy="212" r="8" fill="#ffffff"/>
+  <g stroke="#9be7ff" stroke-width="4" stroke-linecap="round">
+    <path d="M150 190v-16M150 234v14M128 212h-16M172 212h16"/>
+  </g>
+
+  <!-- железный мастер -->
+  <g transform="translate(452 250)">
+    <circle cx="0" cy="-70" r="104" fill="url(#ffurnace)"/>
+    <!-- ноги -->
+    <g fill="#4f4237">
+      <rect x="-50" y="-16" width="38" height="34"/>
+      <rect x="12" y="-16" width="38" height="34"/>
+    </g>
+    <!-- труба за спиной и дым -->
+    <rect x="-92" y="-198" width="26" height="70" fill="#9a9084"/>
+    <rect x="-99" y="-210" width="40" height="14" fill="#9a9084"/>
+    <g fill="#a08d78" opacity="0.4">
+      <ellipse cx="-79" cy="-228" rx="20" ry="10"/>
+      <ellipse cx="-58" cy="-248" rx="15" ry="8"/>
+    </g>
+    <!-- корпус -->
+    <path d="M-62 -146h124v130H-62z" fill="#7d6a58"/>
+    <path d="M-62 -146h124v14H-62z" fill="#94806a"/>
+    <!-- топка с решёткой -->
+    <rect x="-30" y="-112" width="60" height="52" fill="#ff7043"/>
+    <rect x="-30" y="-112" width="60" height="52" fill="none" stroke="#4f4237" stroke-width="5"/>
+    <g fill="#ffd180">
+      <rect x="-26" y="-104" width="52" height="8"/>
+      <rect x="-26" y="-88" width="52" height="8"/>
+      <rect x="-26" y="-72" width="52" height="8"/>
+    </g>
+    <!-- голова в маске сварщика -->
+    <rect x="-34" y="-196" width="68" height="52" fill="#9a9084"/>
+    <rect x="-26" y="-178" width="52" height="14" fill="#16181c"/>
+    <rect x="-21" y="-176" width="14" height="10" fill="#ff7043"/>
+    <rect x="7" y="-176" width="14" height="10" fill="#ff7043"/>
+    <!-- левая рука: поршневой молот -->
+    <rect x="-94" y="-138" width="30" height="62" fill="#6b5a4a"/>
+    <rect x="-86" y="-78" width="16" height="30" fill="#c3ccd1"/>
+    <rect x="-104" y="-52" width="50" height="34" fill="#9a9084"/>
+    <!-- правая рука: цепь с крюком -->
+    <rect x="64" y="-138" width="28" height="56" fill="#6b5a4a"/>
+    <rect x="73" y="-84" width="10" height="56" fill="#c3ccd1"/>
+    <path d="M62 -30h30v22H62z" fill="#9a9084"/>
+    <path d="M82 -8h14v24H82z" fill="#9a9084"/>
+    <path d="M82 14h30v13H82z" fill="#9a9084"/>
+  </g>
+</svg>

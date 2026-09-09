@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>Заяц бежит!</title>
+  
+  <script>
+    window.installGameInputGuards = function installGameInputGuards() {
+      if (window.__gameInputGuardsInstalled) return;
+      window.__gameInputGuardsInstalled = true;
+
+      const prevent = event => event.preventDefault();
+      const lockViewport = () => {
+        const root = document.documentElement;
+        const body = document.body;
+        root.style.overflow = 'hidden';
+        root.style.position = 'fixed';
+        root.style.inset = '0';
+        root.style.width = '100%';
+        root.style.height = '100%';
+        if (body) {
+          body.style.overflow = 'hidden';
+          body.style.position = 'fixed';
+          body.style.inset = '0';
+          body.style.width = '100%';
+          body.style.height = '100%';
+        }
+        window.scrollTo(0, 0);
+      };
+      const isInteractiveControl = event => event.target?.closest?.(
+        'button, select, option, input, textarea, [role="button"]'
+      );
+      // Ползунки громкости (пауза, настройки деревни) обязаны получать
+      // touchmove: без него их нельзя перетащить пальцем — работает только тап
+      // по дорожке. Прокрутку страницы это не открывает: html/body
+      // зафиксированы, а на них стоит touch-action:none.
+      const preventUnlessSliderDrag = event => {
+        if (event.target?.closest?.('input[type="range"]')) return;
+        event.preventDefault();
+      };
+      const preventGameFieldDefault = event => {
+        if (isInteractiveControl(event)) return;
+        event.preventDefault();
+      };
+
+      document.addEventListener('contextmenu', prevent, { capture: true });
+      document.addEventListener('selectstart', prevent, { capture: true });
+      document.addEventListener('dragstart', prevent, { capture: true });
+      document.addEventListener('gesturestart', prevent, { capture: true });
+      document.addEventListener('auxclick', prevent, { capture: true });
+      document.addEventListener('mousedown', preventGameFieldDefault, { capture: true });
+      document.addEventListener('pointerdown', preventGameFieldDefault, { capture: true });
+      document.addEventListener('touchstart', preventGameFieldDefault, { capture: true, passive: false });
+      document.addEventListener('touchmove', preventUnlessSliderDrag, { capture: true, passive: false });
+      document.addEventListener('wheel', preventUnlessSliderDrag, { capture: true, passive: false });
+      window.addEventListener('scroll', lockViewport, { passive: true });
+      window.addEventListener('resize', lockViewport, { passive: true });
+      window.addEventListener('orientationchange', lockViewport, { passive: true });
+      window.addEventListener('pageshow', lockViewport, { passive: true });
+      window.visualViewport?.addEventListener?.('resize', lockViewport, { passive: true });
+      if (document.body) {
+        lockViewport();
+      } else {
+        document.addEventListener('DOMContentLoaded', lockViewport, { once: true });
+      }
+    };
+    window.installGameInputGuards();
+  </script>
+  <style>
+    @font-face {
+      font-family: 'Nunito';
+      font-style: normal;
+      font-weight: 800;
+      font-display: swap;
+      src: url('fonts/nunito-cyrillic-800-normal.woff2') format('woff2');
+      unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+    }
+    @font-face {
+      font-family: 'Nunito';
+      font-style: normal;
+      font-weight: 800;
+      font-display: swap;
+      src: url('fonts/nunito-latin-800-normal.woff2') format('woff2');
+      unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+    }
+    @font-face {
+      font-family: 'Nunito';
+      font-style: normal;
+      font-weight: 900;
+      font-display: swap;
+      src: url('fonts/nunito-cyrillic-900-normal.woff2') format('woff2');
+      unicode-range: U+0301,U+0400-045F,U+0490-0491,U+04B0-04B1,U+2116;
+    }
+    @font-face {
+      font-family: 'Nunito';
+      font-style: normal;
+      font-weight: 900;
+      font-display: swap;
+      src: url('fonts/nunito-latin-900-normal.woff2') format('woff2');
+      unicode-range: U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+2074,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD;
+    }
+    :root {
+      /* Запас у правого края для чужого iframe (Консоль Яндекса на
+         мобильном Chrome отдаёт iframe шире видимой области). Значение
+         ставит src/ui/frameSafeArea.js; вне iframe остаётся нулём. */
+      --frame-safe-top: 0px;
+      --frame-safe-right: 0px;
+      --frame-safe-bottom: 0px;
+      --frame-safe-left: 0px;
+      --game-font: 'Nunito', 'Arial Rounded MT Bold', Arial, sans-serif;
+      --c-gold: #FFC400;
+      --c-orange: #FF7A00;
+      --c-pink: #FF4D8D;
+      --c-violet: #8C4DFF;
+      --c-cyan: #22D3EE;
+      --c-lime: #7CE62E;
+      --c-red: #FF3B3B;
+      --c-ink: #120c24;
+      --c-ink-soft: #23163d;
+      --c-cream: #fff7e6;
+      --c-mint: #4ee87c;
+      --panel-bg: linear-gradient(180deg, rgba(43,29,74,0.96), rgba(19,12,38,0.98));
+      --panel-border: 2px solid rgba(255,255,255,0.22);
+      --panel-shadow: 0 18px 48px rgba(7,4,18,0.52), inset 0 2px 0 rgba(255,255,255,0.15);
+      --control-bg: rgba(18,12,36,0.70);
+      --control-border: rgba(255,255,255,0.26);
+      --radius-panel: 18px;
+      --radius-control: 12px;
+    }
+    /* Unify typography across all inline-styled UI */
+    * { font-family: var(--game-font) !important; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-user-drag: none;
+      -webkit-touch-callout: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    *::selection {
+      background: transparent;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      min-height: 100%;
+      max-width: 100%;
+      position: fixed;
+      inset: 0;
+      overflow: hidden;
+      background: #000;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-user-drag: none;
+      -webkit-touch-callout: none;
+      overscroll-behavior: none;
+      touch-action: none;
+    }
+    #game-canvas {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      /* Фолбэк в % от вьюпорта, не в vw/vh: на Android Chrome 100vw шире
+         окна вкладки (замер: inner 825, 100vw 956). */
+      width: var(--game-width, 100%);
+      height: var(--game-height, 100%);
+      transform: translate(-50%, -50%);
+      display: block;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-user-drag: none;
+      -webkit-touch-callout: none;
+    }
+    /* Невидимая зона захвата на всю нижнюю левую часть экрана: палец может
+       лечь куда угодно, кольцо джойстика всплывает в точке касания. */
+    #joystick-zone {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      /* Проценты, не vw/vh: на Android Chrome vw шире окна вкладки, и зона
+         захвата залезала бы на кнопку дэша справа. */
+      width: 48%;
+      height: 60%;
+      display: none;
+      touch-action: none;
+    }
+    #joystick-ring {
+      position: fixed;
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 50% 40%, rgba(255,255,255,0.22), rgba(255,255,255,0.08) 70%);
+      border: 2px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.35), inset 0 2px 6px rgba(255,255,255,0.18);
+      transform: translate(-50%, -50%);
+      display: none;
+      pointer-events: none;
+    }
+    #dash-button {
+      position: fixed;
+      /* Запас чужого iframe: иначе дэш попадает в срезаемую полосу справа. */
+      right: calc(36px + var(--frame-safe-right, 0px));
+      bottom: 52px;
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, rgba(255,255,255,0.85), rgba(255,183,77,0.85) 70%);
+      border: 2px solid rgba(255, 255, 255, 0.5);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.35), inset 0 2px 6px rgba(255,255,255,0.25);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      font-size: 34px;
+      touch-action: none;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: opacity 0.15s linear;
+      z-index: 60;
+    }
+    #joystick-handle {
+      position: absolute;
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 30%, #ffffff, #cfe4ff 70%);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    #screen-vignette {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 60;
+      background: radial-gradient(ellipse at center, rgba(0,0,0,0) 56%, rgba(16,8,33,0.34) 100%);
+    }
+    /* Shared visual language for UI assembled from JavaScript. */
+    .candy-pill {
+      background: var(--control-bg);
+      border: 2px solid var(--control-border);
+      border-radius: 999px;
+      box-shadow: 0 4px 12px rgba(7,4,18,0.28), inset 0 1px 0 rgba(255,255,255,0.12);
+    }
+    .candy-btn {
+      border: 3px solid rgba(255,255,255,0.88);
+      border-radius: var(--radius-control);
+      color: var(--c-cream);
+      font-weight: 900;
+      text-shadow: 0 2px 3px rgba(0,0,0,0.32);
+      touch-action: manipulation;
+    }
+    button:focus-visible, [role="button"]:focus-visible {
+      outline: 3px solid var(--c-gold);
+      outline-offset: 3px;
+    }
+    #rotate-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      color: #fff;
+      font-size: 24px;
+      font-family: var(--game-font);
+      z-index: 9999;
+      text-align: center;
+    }
+    #rotate-overlay span {
+      width: 48px;
+      height: 76px;
+      display: block;
+      position: relative;
+      margin-bottom: 16px;
+      border: 6px solid #8BE9FF;
+      border-radius: 12px;
+      background: linear-gradient(145deg,#2b2050,#17102f);
+      box-shadow: 0 0 24px rgba(82,201,255,.52), inset 0 0 0 3px rgba(255,255,255,.10);
+      animation: rotateDevice 1.9s ease-in-out infinite;
+    }
+    #rotate-overlay span::after {
+      content:'';position:absolute;width:16px;height:4px;border-radius:999px;
+      background:#FFD24A;left:50%;bottom:6px;transform:translateX(-50%);
+    }
+    @keyframes rotateDevice {
+      0%,30% { transform:rotate(0deg); }
+      70%,100% { transform:rotate(90deg); }
+    }
+    /* Экран загрузки. Разметка и стили лежат прямо здесь, без единой внешней
+       зависимости, поэтому рисуются ДО того, как браузер выкачает бандл: на
+       дешёвом Android это разница между пустым экраном и живой заставкой.
+       Снимается из Game._signalLoadingReady() — по реальному концу загрузки,
+       а не по таймеру. */
+    #boot-splash {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 22px;
+      background:
+        radial-gradient(circle at 50% 32%, rgba(124, 200, 96, 0.30), transparent 55%),
+        linear-gradient(160deg, #1B1035 0%, #2A1A4E 55%, #140C28 100%);
+      font-family: var(--game-font);
+      color: #FFF3C4;
+      transition: opacity 0.42s ease-out;
+      overflow: hidden;
+    }
+    #boot-splash.is-done {
+      opacity: 0;
+      pointer-events: none;
+    }
+    #boot-splash__art {
+      width: clamp(142px, 31vh, 224px);
+      height: clamp(142px, 31vh, 224px);
+      object-fit: contain;
+      filter: drop-shadow(0 18px 18px rgba(0,0,0,.38));
+      animation: bootRun 1.05s cubic-bezier(.45,.05,.55,.95) infinite;
+    }
+    #boot-splash.has-run-art::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background:
+        radial-gradient(circle at 50% 40%, transparent 5%, rgba(9,5,20,.16) 58%, rgba(9,5,20,.62) 100%),
+        linear-gradient(180deg, rgba(8,4,18,.08) 42%, rgba(8,4,18,.70) 100%);
+      pointer-events: none;
+    }
+    #boot-splash.has-run-art #boot-splash__art {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      filter: none;
+      animation: bootBackdrop 12s ease-out both;
+    }
+    #boot-splash__title {
+      position: relative;
+      z-index: 2;
+      font-size: clamp(22px, 5.4vh, 38px);
+      font-weight: 900;
+      letter-spacing: 2px;
+      text-shadow: 0 4px 0 rgba(0, 0, 0, 0.45);
+    }
+    #boot-splash__bar {
+      position: relative;
+      z-index: 2;
+      width: min(280px, 62vw);
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(0, 0, 0, 0.42);
+      border: 2px solid rgba(255, 255, 255, 0.28);
+      overflow: hidden;
+    }
+    #boot-splash__fill {
+      display: block;
+      height: 100%;
+      width: 12%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #66BB6A, #FFD600, #FF7043);
+      /* Полоса растёт сама: точного процента загрузки браузер не сообщает,
+         а честная анимация ожидания лучше поддельных процентов. Последние
+         проценты добирает снятие splash по ready(). */
+      animation: bootFill 7s cubic-bezier(0.2, 0.8, 0.3, 1) forwards;
+    }
+    @keyframes bootRun {
+      0%, 100% { transform: translate3d(-7px,2px,0) rotate(-2deg) scale(1); }
+      48%      { transform: translate3d(8px,-13px,0) rotate(2deg) scale(1.035); }
+    }
+    @keyframes bootFill {
+      0%   { width: 12%; }
+      60%  { width: 74%; }
+      100% { width: 92%; }
+    }
+    @keyframes bootBackdrop {
+      from { transform: scale(1.035); }
+      to   { transform: scale(1); }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #boot-splash__art { animation: none; }
+      #boot-splash__fill { animation: bootFill 7s linear forwards; }
+    }
+    .boot-splash__retry {
+      position: relative;
+      z-index: 2;
+      padding: 12px 26px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      background: linear-gradient(180deg, #C08CFF, #8B4FE8);
+      box-shadow: 0 4px 0 #6233AD;
+      color: #fff;
+      font-family: var(--game-font);
+      font-size: 16px;
+      font-weight: 900;
+      cursor: pointer;
+    }
+  </style>
+  <script type="module" crossorigin src="./assets/index-Bs2xx_D0.js"></script>
+  <link rel="modulepreload" crossorigin href="./assets/vendor-D_p2bCoL.js">
+  <link rel="modulepreload" crossorigin href="./assets/meta-BkTg_F83.js">
+  <link rel="stylesheet" crossorigin href="./assets/meta-DJpS-mq6.css">
+</head>
+<body>
+  <div id="boot-splash">
+    <img id="boot-splash__art" src="./images/ui/loading-bunny.webp" alt="" aria-hidden="true">
+    <div id="boot-splash__title">Заяц бежит!</div>
+    <div id="boot-splash__bar"><span id="boot-splash__fill"></span></div>
+    <script>
+      // Название на сплэше обязано совпадать с карточкой на каждом языке
+      // (п. 5.1.3). Бандл ещё не загружен, поэтому язык сначала угадывается
+      // здесь: ?lang= из URL → ручной выбор игрока → сохранённый язык → язык
+      // браузера. Догадка промахивается на Яндексе: в адресе iframe игры
+      // ?lang= платформы нет, и англоязычный игрок с русским браузером видел
+      // русский титул всю загрузку (возврат модерации). Поэтому язык ещё и
+      // переспрашивается у SDK — он отвечает задолго до конца загрузки бандла.
+      (function localizeBootTitle() {
+        var TITLES = { ru: 'Заяц бежит!', en: 'Rabbit run!' };
+        var LANG_KEY = 'voxel_survivor_language';
+        var MANUAL_KEY = 'voxel_survivor_language_manual';
+
+        function readStorage(key) {
+          try { return localStorage.getItem(key); } catch (_) { return null; }
+        }
+        function normalize(value) {
+          var text = String(value || '').toLowerCase();
+          if (text.indexOf('ru') === 0) return 'ru';
+          if (text.indexOf('en') === 0) return 'en';
+          return null;
+        }
+
+        var queryLang = null;
+        try { queryLang = new URLSearchParams(location.search).get('lang'); } catch (_) {}
+        queryLang = normalize(queryLang);
+        var saved = readStorage(LANG_KEY);
+        var manual = readStorage(MANUAL_KEY) === '1' ? normalize(saved) : null;
+        var browser = normalize(navigator.language) || (navigator.language ? 'en' : 'ru');
+
+        function applyBootLang(value) {
+          var lang = normalize(value);
+          if (!lang || lang === window.__bootLang) return;
+          // Единственный источник языка для инлайн-скриптов до бандла:
+          // applyRunLoadingArt ниже обязан решать так же, а не по-своему.
+          window.__bootLang = lang;
+          var el = document.getElementById('boot-splash__title');
+          if (el) el.textContent = TITLES[lang];
+          document.title = TITLES[lang];
+          // Арт части забегов тоже локализован — перерисовать под новый язык.
+          if (typeof window.__refreshBootArt === 'function') window.__refreshBootArt();
+        }
+
+        applyBootLang(queryLang || manual || normalize(saved) || browser);
+
+        // Явный выбор игрока (?lang= или язык из настроек) платформа не правит.
+        if (queryLang || manual) return;
+
+        function useSdkLang(ysdk) {
+          var env = ysdk && ysdk.environment;
+          applyBootLang(env && env.i18n && env.i18n.lang);
+        }
+        function follow(promise) {
+          if (promise && typeof promise.then === 'function') promise.then(useSdkLang, function () {});
+        }
+        window.addEventListener('yandex-sdk-init-started', function (event) {
+          follow(event && event.detail);
+        });
+        follow(window.__yandexSdkInitPromise);
+      })();
+    </script>
+    <script>
+      // Выбранный в деревне уровень записывается до reload. Этот короткий
+      // inline-скрипт читает его раньше основного бандла, поэтому нужный арт
+      // успевает появиться уже на первом кадре загрузки мира.
+      (function applyRunLoadingArt() {
+        var runs = ['summer', 'winter', 'candy', 'lunar', 'desert', 'swamp',
+          'volcano', 'haunted', 'factory', 'storm', 'mirror', 'clockwork'];
+        var queryRun = new URLSearchParams(location.search).get('run');
+        var pendingRun = null;
+        try { pendingRun = localStorage.getItem('voxel_survivor_pending_run_type'); } catch (_) {}
+        var run = runs.indexOf(queryRun) >= 0 ? queryRun : pendingRun;
+        if (runs.indexOf(run) < 0) return;
+
+        var localized = ['summer', 'winter', 'candy', 'lunar'].indexOf(run) >= 0;
+        var splash = document.getElementById('boot-splash');
+        var art = document.getElementById('boot-splash__art');
+        if (!splash || !art) return;
+
+        var fallback = art.src;
+        function apply() {
+          var localizedSuffix = localized && window.__bootLang === 'en' ? '-en' : '';
+          art.addEventListener('error', function () {
+            splash.classList.remove('has-run-art');
+            art.src = fallback;
+          }, { once: true });
+          art.src = '/images/run-' + run + localizedSuffix + '.webp';
+          splash.classList.add('has-run-art');
+        }
+        // Язык может уточниться ответом SDK уже после первой отрисовки.
+        window.__refreshBootArt = apply;
+        apply();
+        // Титул НЕ трогаем: он уже совпадает с карточкой (п. 5.1.3),
+        // любое «художественное» название здесь — возврат с модерации.
+      })();
+    </script>
+  </div>
+  <canvas id="game-canvas"></canvas>
+  <div id="screen-vignette"></div>
+  <div id="joystick-zone"></div>
+  <div id="joystick-ring">
+    <div id="joystick-handle"></div>
+  </div>
+  <div id="dash-button">💨</div>
+  <div id="rotate-overlay">
+    <span aria-hidden="true"></span>
+  </div>
+  <script>
+    // Сторож экрана загрузки. Страхует случай, когда бандл не доехал вовсе:
+    // тогда main.js не выполнится и показать ошибку будет некому, а игрок
+    // останется под вечной заставкой. Локализация здесь своя и минимальная —
+    // словарь живёт в бандле, которого может не быть.
+    (function watchBootSplash() {
+      var LIMIT_MS = 25000;
+      setTimeout(function () {
+        var splash = document.getElementById('boot-splash');
+        if (!splash || splash.classList.contains('is-done')) return;
+        if (window.__bootFailed) return; // main.js уже показал ошибку сам
+        var ru = (navigator.language || 'ru').toLowerCase().indexOf('ru') === 0;
+        var bar = document.getElementById('boot-splash__bar');
+        if (bar) bar.parentNode.removeChild(bar);
+        var title = document.getElementById('boot-splash__title');
+        if (title) title.textContent = ru ? 'Не удалось загрузить игру' : 'Failed to load the game';
+        var retry = document.createElement('button');
+        retry.type = 'button';
+        retry.className = 'boot-splash__retry';
+        retry.textContent = ru ? 'Перезагрузить' : 'Reload';
+        retry.onclick = function () { location.reload(); };
+        splash.appendChild(retry);
+      }, LIMIT_MS);
+    })();
+  </script>
+</body>
+</html>

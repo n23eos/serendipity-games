@@ -1,19 +1,21 @@
 """Rebuild sibling projects in temporary copies; publish compiled assets only."""
 import pathlib, tempfile, shutil, subprocess, re, json, sys
 root=pathlib.Path(__file__).resolve().parents[1]
-projects={'raindrops':'ya_games_raindrops','ricochet':'game_rickochet','bunny-runner':'bunny_runner','jelly-mix':'jelly3_in_row'}
+projects={'bunny-survival':'Crazy Games/Bunny Survival','ricochet':'game_rickochet','bunny-runner':'bunny_runner','jelly-mix':'jelly3_in_row'}
 for slug, source in projects.items():
  if len(sys.argv)>1 and slug not in sys.argv[1:]: continue
  src=root.parent/source
  with tempfile.TemporaryDirectory(prefix='serendipity-') as tmp:
   work=pathlib.Path(tmp)/source
-  shutil.copytree(src,work,ignore=shutil.ignore_patterns('.git','node_modules','dist','release','store','gametest-out','test-results','playwright-report','references','*.zip','.env*'))
+  shutil.copytree(src,work,ignore=shutil.ignore_patterns('.git','node_modules','dist','release','store','gametest-out','test-results','playwright-report','references','*.zip','.env*','Crazy Games','assets_archive','assets-src','bunny-backpack-assets','bunny-survive-yandex-draft-sprint16-mobile-ui','tmp'))
   (work/'node_modules').symlink_to(src/'node_modules',target_is_directory=True)
   def edit(name,old,new):
    p=work/name;s=p.read_text();assert old in s,(name,old);p.write_text(s.replace(old,new))
-  if slug=='raindrops':
-   edit('src/main.ts','const isLocalHost = LOCAL_HOSTS.has(globalThis.location.hostname);','const isLocalHost = true; // Standalone portfolio demo')
-   edit('src/main.ts','createMockAdapter({ setMuted,','createMockAdapter({ navigatorLanguage: "en", setMuted,')
+  if slug=='bunny-survival':
+   edit('index.html','<script src="https://sdk.crazygames.com/crazygames-sdk-v3.js"></script>','')
+   edit('src/main.js',"setLanguageFromSdk(sdk?.user?.systemInfo?.locale || 'en');","setLanguageFromSdk(langParam || 'en');")
+   build_id=subprocess.check_output(['git','rev-parse','--short','HEAD'],cwd=src,text=True).strip()
+   edit('vite.config.js',"JSON.stringify(buildStamp())",json.dumps(json.dumps('portfolio-'+build_id)))
   elif slug in ('ricochet', 'jelly-mix'):
    edit('src/game/sdk/platform.ts',"location.hostname === 'localhost'","true || location.hostname === 'localhost'")
    edit('src/game/sdk/platform.ts',"(typeof navigator !== 'undefined' ? navigator.language : 'ru').slice(0, 2)","'en'")

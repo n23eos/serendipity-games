@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 360" width="640" height="360">
+  <defs>
+    <linearGradient id="nsky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0d0a16"/>
+      <stop offset="0.6" stop-color="#241a3a"/>
+      <stop offset="1" stop-color="#3d3550"/>
+    </linearGradient>
+    <linearGradient id="ground" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3d3550"/>
+      <stop offset="1" stop-color="#221c33"/>
+    </linearGradient>
+    <radialGradient id="moon" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#e8e2ff" stop-opacity="0.9"/>
+      <stop offset="1" stop-color="#e8e2ff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="jackglow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#ffb74d" stop-opacity="0.75"/>
+      <stop offset="1" stop-color="#ffb74d" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="640" height="360" fill="url(#nsky)"/>
+
+  <!-- луна -->
+  <circle cx="502" cy="80" r="86" fill="url(#moon)"/>
+  <circle cx="502" cy="80" r="38" fill="#efeaff"/>
+  <circle cx="516" cy="70" r="8" fill="#d6cff0"/>
+  <circle cx="492" cy="94" r="6" fill="#d6cff0"/>
+
+  <!-- сухие деревья -->
+  <g stroke="#1b1626" stroke-width="8" stroke-linecap="round" fill="none">
+    <path d="M78 250V150M78 186l-28-24M78 206l26-22M78 168l20-26"/>
+    <path d="M566 254V168M566 198l24-20M566 214l-22-18"/>
+  </g>
+
+  <!-- земля -->
+  <path d="M0 244c110-22 190 10 300-6s230-26 340 4v118H0z" fill="url(#ground)"/>
+
+  <!-- надгробия -->
+  <g fill="#4a4560">
+    <path d="M120 268h44v56h-44z"/><circle cx="142" cy="268" r="22"/>
+    <path d="M212 286h34v40h-34z"/><circle cx="229" cy="286" r="17"/>
+    <path d="M470 276h40v50h-40z"/><circle cx="490" cy="276" r="20"/>
+  </g>
+  <g stroke="#2f2b3d" stroke-width="5" stroke-linecap="round">
+    <path d="M132 274h20M142 268v26M480 284h20M490 278v24"/>
+  </g>
+
+  <!-- блуждающие огни -->
+  <g>
+    <circle cx="352" cy="212" r="24" fill="#4dd0e1" opacity="0.25"/>
+    <circle cx="352" cy="212" r="9" fill="#9be7ff"/>
+    <circle cx="596" cy="300" r="20" fill="#4dd0e1" opacity="0.22"/>
+    <circle cx="596" cy="300" r="7" fill="#9be7ff"/>
+  </g>
+
+  <!-- тыквы-фонари -->
+  <g>
+    <circle cx="188" cy="330" r="46" fill="url(#jackglow)"/>
+    <ellipse cx="188" cy="332" rx="26" ry="22" fill="#ff9800"/>
+    <rect x="183" y="304" width="10" height="12" rx="4" fill="#4e7a2f"/>
+    <g fill="#ffe082">
+      <path d="M176 326l10-8 2 10z"/><path d="M200 326l-10-8-2 10z"/>
+      <path d="M176 340h24l-6 8h-12z"/>
+    </g>
+  </g>
+
+  <!-- тыквенный жнец -->
+  <g transform="translate(330 300)">
+    <!-- коса -->
+    <g stroke="#2b2338" stroke-width="9" stroke-linecap="round">
+      <path d="M56 20L86 -108"/>
+    </g>
+    <path d="M86 -108c-30 4-52 20-62 42 30 6 56-8 62-42z" fill="#ffe082"/>
+    <!-- балахон -->
+    <path d="M-40 -96h80l18 96H-58z" fill="#2b2338"/>
+    <path d="M-58 0h116l-8 22-14-14-12 16-14-16-14 14-12-16-14 14z" fill="#2b2338"/>
+    <!-- рукава -->
+    <path d="M-40 -84l-24 14 8 54 22-10z" fill="#241d30"/>
+    <path d="M40 -84l24 14-8 54-22-10z" fill="#241d30"/>
+    <!-- голова-тыква -->
+    <circle cx="0" cy="-126" r="52" fill="url(#jackglow)"/>
+    <ellipse cx="0" cy="-126" rx="30" ry="27" fill="#ff9800"/>
+    <rect x="-5" y="-160" width="10" height="14" rx="4" fill="#2b2338"/>
+    <g fill="#ffe082">
+      <path d="M-20 -134l14-10 3 13z"/>
+      <path d="M20 -134l-14-10-3 13z"/>
+      <path d="M-19 -116h38l-9 11h-20z"/>
+    </g>
+  </g>
+</svg>

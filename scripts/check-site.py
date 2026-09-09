@@ -31,3 +31,12 @@ for path in (ROOT/'ru').glob('*.html'):
  if pages[path].lang!='ru':errors.append(f'Wrong locale: {path.name}')
 assert not errors,'\n'.join(errors)
 print(f'PASS: {len(pages)} pages; {count} local references; locale parity, fragments and game targets.')
+# The replacement must remain consistent across both public home pages.
+for path in (ROOT/'index.html', ROOT/'ru/index.html'):
+ markup=path.read_text()
+ assert 'raindrops' not in markup.lower(), f'Old portfolio entry: {path}'
+ assert 'bunny-survival.html' in markup, f'Missing Bunny Survival: {path}'
+demo=ROOT/'games/bunny-survival/index.html'
+assert demo.exists(), 'Bunny Survival build missing'
+assert 'https://sdk.crazygames.com/' not in demo.read_text(), 'Standalone demo loads portal SDK'
+print('PASS: Bunny Survival replacement and standalone entrypoint')
