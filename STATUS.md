@@ -25,6 +25,8 @@ User confirmed hello@serendipity-games.com and active domain forwarding. Added m
 After DNS propagation, removed/re-added custom domain per GitHub documentation. Certificate approved for apex/www; enforced HTTPS enabled. Verified HTTPS 200 and two hello mailto links on both home pages; HTTP redirects to HTTPS; HTTPS www redirects to apex. All website changes pushed. User brief remains local and unmodified.
 
 ## Bunny Survival replacement · 2026-09-09
-In progress: replace Raindrops in EN/RU portfolio with Bunny Survival (in-game title Rabbit run!). Source: Crazy Games/Bunny Survival working tree, copied without editing original. Remove remote SDK script in temporary build and pass locale into iframe. Verify build, route references, local launch and production.
+Completed: replaced Raindrops in EN/RU portfolio with Bunny Survival (in-game title Rabbit run!). Source: Crazy Games/Bunny Survival working tree, copied without editing original. Remove remote SDK script in temporary build and pass locale into iframe. Verify build, route references, local launch and production.
 - Verified: Vite production build succeeded; site references and replacement regression checks passed; desktop RU intro → run and EN launch verified through CUA. Landscape viewport 844×390 visually inspected (physical touch device not tested). Old player URL resolves to Bunny Survival. Existing no-source MutationObserver console error also observed in this iframe; game runs. Source working tree left untouched.
 - New unrelated untracked logo asset observed during task and left untouched. Publishing only demo replacement files.
+
+- Published commit 8e683a2; Pages build succeeded. HTTPS checks passed for both updated home pages, new game page, build and cover. Production iframe loaded the Russian story introduction in CUA.
