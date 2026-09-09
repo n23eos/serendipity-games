@@ -1,3 +1,5 @@
+const ru = new URLSearchParams(location.search).get('lang') === 'ru';
+if (ru) { document.documentElement.lang='ru'; document.querySelector('.player-bar a').textContent='← Все игры'; document.querySelector('.player-bar a').href='./ru/#games'; document.querySelector('#fullscreen').textContent='⛶ На весь экран'; document.querySelector('.player-hint').textContent='Демо в разработке · Интерфейс игры может быть на английском.'; }
 const games = {'raindrops':'Raindrops','ricochet':'Ricochet: Neon Drive','bunny-runner':'Bunny Runner','jelly-mix':'Jelly Mix'};
 const slug = new URLSearchParams(location.search).get('game');
 const frame = document.getElementById('game');
@@ -14,5 +16,5 @@ if (Object.hasOwn(games, slug)) {
  });
 } else {
  frame.remove(); button.remove();
- document.getElementById('title').textContent = 'Game not found — choose a game from All games.';
+ document.getElementById('title').textContent = ru ? 'Игра не найдена — вернитесь к списку игр.' : 'Game not found — choose a game from All games.';
 }
