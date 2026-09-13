@@ -16,6 +16,10 @@ Run `python3 -m http.server 8080` and open http://localhost:8080.
 
 All rights reserved. Game builds and artwork are provided for browser play and portfolio review. No redistribution license is granted.
 
+## Poki publishing research
+
+The maintained Russian-language research and submission playbook starts at [`docs/poki/README.md`](docs/poki/README.md). It covers developer access, game testing, SDK/QA requirements, presentation, deal terms, and a Serendipity Games readiness audit.
+
 ## Studio pages (EN / RU)
 
 Edit `scripts/build-site.py`, then run `python3 scripts/build-site.py` to regenerate the two home pages and eight game detail pages. Shared styles and interaction code live in `style.css` and `site.js`; the demo wrapper remains `play.html` / `player.js`.

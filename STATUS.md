@@ -30,3 +30,11 @@ Completed: replaced Raindrops in EN/RU portfolio with Bunny Survival (in-game ti
 - New unrelated untracked logo asset observed during task and left untouched. Publishing only demo replacement files.
 
 - Published commit 8e683a2; Pages build succeeded. HTTPS checks passed for both updated home pages, new game page, build and cover. Production iframe loaded the Russian story introduction in CUA.
+
+## Poki developer/submission research · 2026-09-09
+- Goal: produce a durable, linked Markdown knowledge base covering developer approval, game submission, technical/SDK requirements, presentation, and an actionable checklist for Serendipity Games.
+- Stage: complete. Nine linked documents are stored under `docs/poki/`; the entry point is `docs/poki/README.md`.
+- Decisions: official Poki sources take priority; independent cases are labeled as self-reported/secondary; sourced facts, unknowns, inferences, and project recommendations are separated. Ricochet is the provisional first submission candidate pending player data.
+- Checks: three-agent fact/citation/technical review completed; 55 unique external Markdown links returned HTTP 200; internal Markdown targets, whitespace diff, local build sizes, SDK/platform markers, thumbnails, save calls, and the Bunny Survival asset-path risk were checked. No game build was changed.
+- Blockers: none.
+- Next: choose the flagship, fill the personal/studio placeholders in `docs/poki/07-application-template.md`, then prepare a separate Poki build and run Inspector/playtests. Registration or submission has not been performed.
