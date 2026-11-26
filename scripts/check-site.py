@@ -12,7 +12,7 @@ class Page(HTMLParser):
   if tag=='html':self.lang=a.get('lang')
   for key in ('src','href'):
    if key in a:self.refs.append(a[key])
-pages={p:Page(p) for p in [*ROOT.glob('*.html'),*(ROOT/'ru').glob('*.html')]}
+pages={p:Page(p) for p in [*ROOT.glob('*.html'),*(ROOT/'ru').glob('*.html'),ROOT/'jellymix-privacy/index.html']}
 errors=[]; count=0
 for path,page in pages.items():
  for ref in page.refs:
@@ -40,3 +40,9 @@ demo=ROOT/'games/bunny-survival/index.html'
 assert demo.exists(), 'Bunny Survival build missing'
 assert 'https://sdk.crazygames.com/' not in demo.read_text(), 'Standalone demo loads portal SDK'
 print('PASS: Bunny Survival replacement and standalone entrypoint')
+policy=ROOT/'jellymix-privacy/index.html'
+assert policy.exists(), 'Jelly Mix privacy policy missing'
+assert 'hello@serendipity-games.com' in policy.read_text(), 'Privacy contact missing'
+for path in (ROOT/'jelly-mix.html', ROOT/'ru/jelly-mix.html'):
+ assert 'jellymix-privacy/' in path.read_text(), f'Privacy link missing: {path}'
+print('PASS: Jelly Mix privacy policy and public links')
