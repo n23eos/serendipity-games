@@ -38,3 +38,11 @@ Completed: replaced Raindrops in EN/RU portfolio with Bunny Survival (in-game ti
 - Checks: three-agent fact/citation/technical review completed; 55 unique external Markdown links returned HTTP 200; internal Markdown targets, whitespace diff, local build sizes, SDK/platform markers, thumbnails, save calls, and the Bunny Survival asset-path risk were checked. No game build was changed.
 - Blockers: none.
 - Next: choose the flagship, fill the personal/studio placeholders in `docs/poki/07-application-template.md`, then prepare a separate Poki build and run Inspector/playtests. Registration or submission has not been performed.
+
+## Jelly Mix privacy policy · 2026-11-26
+- Published the Russian privacy policy for the Android game at `https://serendipity-games.com/jellymix-privacy/` and linked it from both Jelly Mix detail pages.
+- Policy covers local game data, Yandex Mobile Ads SDK, purposes, retention, deletion and the public contact `hello@serendipity-games.com`.
+- Checks passed: site build, 14-page local reference and locale check, JavaScript syntax, whitespace diff, desktop and 360px mobile visual review. Mobile heading overflow found during review was fixed and rechecked.
+- Production: commit `16e84fd` pushed to `main`; GitHub Pages returned HTTP 200 for the policy and both linked detail pages. Live policy content SHA-256 matched the local file exactly.
+- Blockers: none.
+- Next: use the published URL in the Android app and RuStore listing.
